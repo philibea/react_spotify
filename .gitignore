@@ -1,0 +1,10 @@
+public/*
+
+node_modules
+bower_components
+
+#Webstorm metadata
+.idea
+
+# Mac files
+.DS_Store
