@@ -8,9 +8,13 @@ constructor(props) {
     id: '',
     loading: true,
     error: false,
+    artist_id: '',
+    artist_name: '',
+    album: '',
     tracks: [],
   }
   this.callTracks = this.callTracks.bind(this);
+  this.badge = this.badge.bind(this);
 }
 
 componentWillMount() {
@@ -34,7 +38,8 @@ callTracks(id) {
       .then( res => res.json())
       .then( json => {
         console.log(json);
-        this.setState({loading: false, error: false, tracks:json.items})
+        let art = json.items[0].artists[0];
+        this.setState({loading: false, error: false, artist_id:art.id,artist_name: art.name, tracks:json.items})
       })
       .catch( err => {
         this.setState({loading: false, error: true });
@@ -42,17 +47,24 @@ callTracks(id) {
     });
   };
 
+badge(t) {
+  const s = Math.floor(t / 1000) % 60;
+  const m = Math.floor(t / 60000) % 60;
+
+  return <span className='badge'>{m}:{s}</span>;
+};
+
 render() {
   return (
     <div className='container'>
       <ol className='breadcrumb'>
         <li><a href='/'>Recherche</a></li>
-        <li><a href='#'>{ 'Artist' }</a></li>
+        <li><a href={`/artist/${this.state.artist_id}`}>{this.state.artist_name}</a></li>
         <li className='active'>{ 'Album' }</li>
       </ol>
       <div className='page-header'>
         <h1>Pistes</h1>
-        <h2>{ 'Artist' } - { 'Album' }</h2>
+        <h2>{this.state.artist} - { 'Album' }</h2>
       </div>
 
       <div className='row'>
@@ -84,7 +96,7 @@ render() {
           <ul className='list-group'>
             {this.state.tracks.length > 0 && !this.state.loading &&
             this.state.tracks.map((track,index) =>
-              ( <li key={track.id}className='list-group-item'>{track.track_number}. {track.name} <span className='badge'>00:00</span></li>))
+              ( <li key={track.id} className='list-group-item'>{track.track_number}. {track.name} {this.badge(track.duration_ms)} </li>))
             }
           </ul>
         </div>

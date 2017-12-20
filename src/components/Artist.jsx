@@ -9,6 +9,7 @@ constructor(props) {
     loading: true,
     error: false,
     albums: [],
+    artist: '',
   }
   this.callAlbum = this.callAlbum.bind(this);
 }
@@ -21,6 +22,7 @@ componentWillMount() {
 
 componentDidMount () {
   this.callAlbum(this.state.id);
+  console.log(this.props);
 }
 
 callAlbum(id) {
@@ -34,7 +36,8 @@ callAlbum(id) {
       .then( res => res.json())
       .then( json => {
         console.log(json);
-        this.setState({loading: false, error: false, albums:json.items})
+        this.setState({loading: false, error: false, albums:json.items,artist:json.items[0].artists[0].name });
+
       })
       .catch( err => {
         this.setState({loading: false, error: true });
@@ -47,11 +50,11 @@ render() {
     <div className='container'>
         <ol className='breadcrumb'>
           <li><a href='/'>Recherche</a></li>
-          <li className='active'>{ 'Artist' }</li>
+          <li className='active'>{ this.state.artist}</li>
         </ol>
           <div className='page-header'>
             <h1>Albums</h1>
-            <h2>{ 'Artist' }</h2>
+            <h2>{this.state.artist}</h2>
           </div>
           <div className='container albums'>
             <div className='row'>
@@ -80,7 +83,7 @@ render() {
                 this.state.albums.map((album,index) => (
                   <div key={album.id} className='col-xs-12 col-sm-4 col-md-4 col-lg-3'>
                     <div className='thumbnail text-center'>
-                      <a href={`/album/${album.id}`}>
+                      <a href={`/album/${album.id}`} >
                         { album.images.length > 0 &&
                         <img className='media-object' src={album.images[1].url} height="300" width="300" alt={album.name} />
                          }
@@ -89,7 +92,7 @@ render() {
                         }
                       </a>
                       <div className='caption'>
-                        <h4>{album.name }</h4>
+                        <h4>{album.name}</h4>
                       </div>
                     </div>
                   </div>
